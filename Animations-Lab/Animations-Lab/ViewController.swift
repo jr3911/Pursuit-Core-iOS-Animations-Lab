@@ -26,6 +26,33 @@ class ViewController: UIViewController {
         return stepper
     }()
     
+    lazy var sideButtonStackView: UIStackView = {
+       let buttonStack = UIStackView()
+        buttonStack.axis = .horizontal
+        buttonStack.alignment = .center
+        buttonStack.distribution = .equalSpacing
+        buttonStack.spacing = 30
+        return buttonStack
+    }()
+    
+    lazy var leftButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Move square left", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .cyan
+        button.addTarget(self, action: #selector(animateLeft), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var rightButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Move square right", for: .normal)
+        button.setTitleColor(.black, for: .normal)
+        button.backgroundColor = .cyan
+        button.addTarget(self, action: #selector(animateRight), for: .touchUpInside)
+        return button
+    }()
+    
     lazy var blueSquare: UIView = {
         let view = UIView()
         view.backgroundColor = .blue
@@ -103,6 +130,27 @@ class ViewController: UIViewController {
         }
     }
     
+    //MARK: Objective C Functions
+    @objc func stepperButtonPressed() {
+        speedLabel.text = speedStepper.value.description
+    }
+    
+    @objc func animateRight() {
+        let originalConstant = blueSquareCenterXConstraint.constant
+        blueSquareCenterXConstraint.constant = originalConstant + 50
+        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func animateLeft() {
+        let originalConstant = blueSquareCenterXConstraint.constant
+        blueSquareCenterXConstraint.constant = originalConstant - 50
+        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     
     //MARK: Collection - Functions
     private func addSubviews() {
@@ -110,7 +158,14 @@ class ViewController: UIViewController {
         view.addSubview(speedStepper)
         view.addSubview(blueSquare)
         addStackViewSubviews()
+        addSideStackViewSubviews()
         view.addSubview(buttonStackView)
+        view.addSubview(sideButtonStackView)
+    }
+    
+    private func addSideStackViewSubviews() {
+        sideButtonStackView.addSubview(leftButton)
+        sideButtonStackView.addSubview(rightButton)
     }
     
     private func addStackViewSubviews() {
@@ -121,10 +176,13 @@ class ViewController: UIViewController {
     private func configureConstraints() {
         constrainSpeedLabel()
         constrainSpeedStepper()
+        constrainLeftButton()
+        constrainRightButton()
         constrainBlueSquare()
         constrainUpButton()
         constrainDownButton()
         constrainButtonStackView()
+        constrainSideButtonStackView()
     }
     
     //MARK: Individual - Functions
@@ -143,6 +201,17 @@ class ViewController: UIViewController {
         speedStepper.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.25).isActive = true
         speedStepper.heightAnchor.constraint(equalToConstant: 50).isActive = true
         speedLabel.text = speedStepper.value.description
+    }
+    
+    private func constrainLeftButton() {
+        leftButton.translatesAutoresizingMaskIntoConstraints = false
+        leftButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+    }
+    
+    private func constrainRightButton() {
+        rightButton.translatesAutoresizingMaskIntoConstraints = false
+        rightButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        rightButton.trailingAnchor.constraint(equalTo: sideButtonStackView.trailingAnchor).isActive = true
     }
     
     private func constrainUpButton() {
@@ -176,9 +245,14 @@ class ViewController: UIViewController {
         ])
     }
     
-    //MARK: Objective C Functions
-    @objc func stepperButtonPressed() {
-        speedLabel.text = speedStepper.value.description
+    private func constrainSideButtonStackView() {
+        sideButtonStackView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            sideButtonStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            sideButtonStackView.centerYAnchor.constraint(equalTo: speedStepper.bottomAnchor, constant: 20),
+            sideButtonStackView.heightAnchor.constraint(equalToConstant: 50),
+            sideButtonStackView.widthAnchor.constraint(equalTo: view.widthAnchor),
+        ])
     }
     
 }
