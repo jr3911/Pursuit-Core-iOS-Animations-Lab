@@ -116,16 +116,14 @@ class ViewController: UIViewController {
     
     //MARK: IBActions
     @IBAction func animateSquareUp(sender: UIButton) {
-        let oldOffset = blueSquareCenterYConstraint.constant
-        blueSquareCenterYConstraint.constant = oldOffset - 150
+        blueSquareCenterYConstraint.constant -= 150
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
     @IBAction func animateSquareDown(sender: UIButton) {
-        let oldOffet = blueSquareCenterYConstraint.constant
-        blueSquareCenterYConstraint.constant = oldOffet + 150
+        blueSquareCenterYConstraint.constant += 150
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
@@ -137,16 +135,14 @@ class ViewController: UIViewController {
     }
     
     @objc func animateRight() {
-        let originalConstant = blueSquareCenterXConstraint.constant
-        blueSquareCenterXConstraint.constant = originalConstant + 50
+        blueSquareCenterXConstraint.constant += 50
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
     @objc func animateLeft() {
-        let originalConstant = blueSquareCenterXConstraint.constant
-        blueSquareCenterXConstraint.constant = originalConstant - 50
+        blueSquareCenterXConstraint.constant -= 50
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
