@@ -9,6 +9,22 @@
 import UIKit
 
 class ViewController: UIViewController {
+    //MARK: Properties
+    lazy var speedLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        return label
+    }()
+    
+    lazy var speedStepper: UIStepper = {
+        let stepper = UIStepper()
+        stepper.value = 2
+        stepper.stepValue = 1
+        stepper.minimumValue = 0.0
+        stepper.maximumValue = 4
+        stepper.addTarget(self, action: #selector(stepperButtonPressed), for: .valueChanged)
+        return stepper
+    }()
     
     lazy var blueSquare: UIView = {
         let view = UIView()
@@ -43,6 +59,8 @@ class ViewController: UIViewController {
         return button
     }()
     
+    
+    //MARK: Layout Constraints
     lazy var blueSquareHeightConstaint: NSLayoutConstraint = {
         blueSquare.heightAnchor.constraint(equalToConstant: 200)
     }()
@@ -59,16 +77,20 @@ class ViewController: UIViewController {
         blueSquare.centerYAnchor.constraint(equalTo: view.centerYAnchor)
     }()
     
+    
+    //MARK: LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         configureConstraints()
     }
     
+    
+    //MARK: IBActions
     @IBAction func animateSquareUp(sender: UIButton) {
         let oldOffset = blueSquareCenterYConstraint.constant
         blueSquareCenterYConstraint.constant = oldOffset - 150
-        UIView.animate(withDuration: 2) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
@@ -76,12 +98,16 @@ class ViewController: UIViewController {
     @IBAction func animateSquareDown(sender: UIButton) {
         let oldOffet = blueSquareCenterYConstraint.constant
         blueSquareCenterYConstraint.constant = oldOffet + 150
-        UIView.animate(withDuration: 2) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
+    
+    //MARK: Collection - Functions
     private func addSubviews() {
+        view.addSubview(speedLabel)
+        view.addSubview(speedStepper)
         view.addSubview(blueSquare)
         addStackViewSubviews()
         view.addSubview(buttonStackView)
@@ -93,10 +119,30 @@ class ViewController: UIViewController {
     }
     
     private func configureConstraints() {
+        constrainSpeedLabel()
+        constrainSpeedStepper()
         constrainBlueSquare()
         constrainUpButton()
         constrainDownButton()
         constrainButtonStackView()
+    }
+    
+    //MARK: Individual - Functions
+    private func constrainSpeedLabel() {
+        speedLabel.translatesAutoresizingMaskIntoConstraints = false
+        speedLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
+        speedLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
+        speedLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
+        speedLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+    }
+    
+    private func constrainSpeedStepper() {
+        speedStepper.translatesAutoresizingMaskIntoConstraints = false
+        speedStepper.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        speedStepper.centerYAnchor.constraint(equalTo: speedLabel.bottomAnchor, constant: 40).isActive = true
+        speedStepper.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.25).isActive = true
+        speedStepper.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        speedLabel.text = speedStepper.value.description
     }
     
     private func constrainUpButton() {
@@ -129,6 +175,12 @@ class ViewController: UIViewController {
             buttonStackView.widthAnchor.constraint(equalTo: view.widthAnchor),
         ])
     }
+    
+    //MARK: Objective C Functions
+    @objc func stepperButtonPressed() {
+        speedLabel.text = speedStepper.value.description
+    }
+    
 }
 
 
