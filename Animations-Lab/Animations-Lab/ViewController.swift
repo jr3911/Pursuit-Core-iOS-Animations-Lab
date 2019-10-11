@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     lazy var speedLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.backgroundColor = .magenta
         return label
     }()
     
@@ -132,7 +133,7 @@ class ViewController: UIViewController {
     
     //MARK: Objective C Functions
     @objc func stepperButtonPressed() {
-        speedLabel.text = speedStepper.value.description
+        speedLabel.text = "Seconds: \(speedStepper.value.description)"
     }
     
     @objc func animateRight() {
@@ -188,41 +189,54 @@ class ViewController: UIViewController {
     //MARK: Individual - Functions
     private func constrainSpeedLabel() {
         speedLabel.translatesAutoresizingMaskIntoConstraints = false
-        speedLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        speedLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor).isActive = true
-        speedLabel.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50).isActive = true
-        speedLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            speedLabel.heightAnchor.constraint(equalToConstant: 30),
+            speedLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.3),
+            speedLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            speedLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0)
+        ])
     }
     
     private func constrainSpeedStepper() {
         speedStepper.translatesAutoresizingMaskIntoConstraints = false
-        speedStepper.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        speedStepper.centerYAnchor.constraint(equalTo: speedLabel.bottomAnchor, constant: 40).isActive = true
-        speedStepper.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.25).isActive = true
-        speedStepper.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        speedLabel.text = speedStepper.value.description
+        NSLayoutConstraint.activate([
+            speedStepper.centerXAnchor.constraint(equalTo: speedLabel.centerXAnchor),
+            speedStepper.topAnchor.constraint(equalTo: speedLabel.bottomAnchor, constant: 10),
+            speedStepper.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.25),
+            speedStepper.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        speedLabel.text = "Seconds: \(speedStepper.value.description)"
     }
     
     private func constrainLeftButton() {
         leftButton.translatesAutoresizingMaskIntoConstraints = false
-        leftButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        NSLayoutConstraint.activate([
+            leftButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
     }
     
     private func constrainRightButton() {
         rightButton.translatesAutoresizingMaskIntoConstraints = false
-        rightButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        rightButton.trailingAnchor.constraint(equalTo: sideButtonStackView.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            rightButton.heightAnchor.constraint(equalToConstant: 50),
+            rightButton.trailingAnchor.constraint(equalTo: sideButtonStackView.trailingAnchor)
+        ])
+        
     }
     
     private func constrainUpButton() {
         upButton.translatesAutoresizingMaskIntoConstraints = false
-        upButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        upButton.trailingAnchor.constraint(equalTo: buttonStackView.trailingAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            upButton.heightAnchor.constraint(equalToConstant: 50),
+            upButton.trailingAnchor.constraint(equalTo: buttonStackView.trailingAnchor)
+        ])
     }
     
     private func constrainDownButton() {
         downButton.translatesAutoresizingMaskIntoConstraints = false
-        downButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        NSLayoutConstraint.activate([
+            downButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
     }
     
     private func constrainBlueSquare() {
