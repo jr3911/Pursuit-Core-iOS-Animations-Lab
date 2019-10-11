@@ -23,7 +23,24 @@ class ViewController: UIViewController {
         stepper.stepValue = 1
         stepper.minimumValue = 0.0
         stepper.maximumValue = 4
-        stepper.addTarget(self, action: #selector(stepperButtonPressed), for: .valueChanged)
+        stepper.addTarget(self, action: #selector(speedStepperButtonPressed), for: .valueChanged)
+        return stepper
+    }()
+    
+    lazy var distanceLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = .magenta
+        return label
+    }()
+    
+    lazy var distanceStepper: UIStepper = {
+        let stepper = UIStepper()
+        stepper.value = 50
+        stepper.stepValue = 25
+        stepper.minimumValue = 0
+        stepper.maximumValue = 100
+        stepper.addTarget(self, action: #selector(distanceStepperButtonPressed), for: .valueChanged)
         return stepper
     }()
     
@@ -116,33 +133,37 @@ class ViewController: UIViewController {
     
     //MARK: IBActions
     @IBAction func animateSquareUp(sender: UIButton) {
-        blueSquareCenterYConstraint.constant -= 150
+        blueSquareCenterYConstraint.constant -= CGFloat(self.distanceStepper.value)
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
     @IBAction func animateSquareDown(sender: UIButton) {
-        blueSquareCenterYConstraint.constant += 150
+        blueSquareCenterYConstraint.constant += CGFloat(self.distanceStepper.value)
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
     //MARK: Objective C Functions
-    @objc func stepperButtonPressed() {
+    @objc func speedStepperButtonPressed() {
         speedLabel.text = "Seconds: \(speedStepper.value.description)"
     }
     
+    @objc func distanceStepperButtonPressed() {
+        distanceLabel.text = "Distance: \(distanceStepper.value.description)"
+    }
+    
     @objc func animateRight() {
-        blueSquareCenterXConstraint.constant += 50
+        blueSquareCenterXConstraint.constant += CGFloat(self.distanceStepper.value)
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
     }
     
     @objc func animateLeft() {
-        blueSquareCenterXConstraint.constant -= 50
+        blueSquareCenterXConstraint.constant -= CGFloat(self.distanceStepper.value)
         UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
             self.view.layoutIfNeeded()
         }
@@ -154,6 +175,8 @@ class ViewController: UIViewController {
         view.addSubview(speedLabel)
         view.addSubview(speedStepper)
         view.addSubview(blueSquare)
+        view.addSubview(distanceLabel)
+        view.addSubview(distanceStepper)
         addStackViewSubviews()
         addSideStackViewSubviews()
         view.addSubview(buttonStackView)
@@ -173,6 +196,8 @@ class ViewController: UIViewController {
     private func configureConstraints() {
         constrainSpeedLabel()
         constrainSpeedStepper()
+        constrainDistanceLabel()
+        constrainDistanceStepper()
         constrainLeftButton()
         constrainRightButton()
         constrainBlueSquare()
@@ -202,6 +227,27 @@ class ViewController: UIViewController {
             speedStepper.heightAnchor.constraint(equalToConstant: 50)
         ])
         speedLabel.text = "Seconds: \(speedStepper.value.description)"
+    }
+    
+    private func constrainDistanceLabel() {
+        distanceLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            distanceLabel.heightAnchor.constraint(equalToConstant: 30),
+            distanceLabel.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.3),
+            distanceLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
+            distanceLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0)
+        ])
+    }
+    
+    private func constrainDistanceStepper() {
+        distanceStepper.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            distanceStepper.centerXAnchor.constraint(equalTo: distanceLabel.centerXAnchor),
+            distanceStepper.topAnchor.constraint(equalTo: distanceLabel.bottomAnchor, constant: 10),
+            distanceStepper.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.25),
+            distanceStepper.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        distanceLabel.text = "Distance: \(distanceStepper.value.description)"
     }
     
     private func constrainLeftButton() {
