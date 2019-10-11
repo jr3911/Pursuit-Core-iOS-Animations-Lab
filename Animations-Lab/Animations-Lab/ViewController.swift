@@ -10,6 +10,10 @@ import UIKit
 
 class ViewController: UIViewController {
     //MARK: Properties
+    let pickerOptions: [UIView.AnimationOptions] = [.autoreverse, .repeat, .curveEaseIn, .curveEaseOut, .curveLinear]
+    
+    var chosenAnimationStyle: UIView.AnimationOptions!
+    
     lazy var speedLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
@@ -104,6 +108,13 @@ class ViewController: UIViewController {
         return button
     }()
     
+    lazy var pickerView: UIPickerView = {
+        let pv = UIPickerView()
+        pv.dataSource = self
+        pv.delegate = self
+        return pv
+    }()
+    
     
     //MARK: Layout Constraints
     lazy var blueSquareHeightConstaint: NSLayoutConstraint = {
@@ -126,6 +137,7 @@ class ViewController: UIViewController {
     //MARK: LifeCycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        chosenAnimationStyle = .autoreverse
         addSubviews()
         configureConstraints()
     }
@@ -134,16 +146,18 @@ class ViewController: UIViewController {
     //MARK: IBActions
     @IBAction func animateSquareUp(sender: UIButton) {
         blueSquareCenterYConstraint.constant -= CGFloat(self.distanceStepper.value)
-        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value, delay: 0, options: chosenAnimationStyle, animations: {
+            [unowned self] in
             self.view.layoutIfNeeded()
-        }
+        }, completion: nil)
     }
     
     @IBAction func animateSquareDown(sender: UIButton) {
         blueSquareCenterYConstraint.constant += CGFloat(self.distanceStepper.value)
-        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value, delay: 0, options: chosenAnimationStyle, animations: {
+            [unowned self] in
             self.view.layoutIfNeeded()
-        }
+        }, completion: nil)
     }
     
     //MARK: Objective C Functions
@@ -157,16 +171,18 @@ class ViewController: UIViewController {
     
     @objc func animateRight() {
         blueSquareCenterXConstraint.constant += CGFloat(self.distanceStepper.value)
-        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value, delay: 0, options: chosenAnimationStyle, animations: {
+            [unowned self] in
             self.view.layoutIfNeeded()
-        }
+        }, completion: nil)
     }
     
     @objc func animateLeft() {
         blueSquareCenterXConstraint.constant -= CGFloat(self.distanceStepper.value)
-        UIView.animate(withDuration: self.speedStepper.value) { [unowned self] in
+        UIView.animate(withDuration: self.speedStepper.value, delay: 0, options: chosenAnimationStyle, animations: {
+            [unowned self] in
             self.view.layoutIfNeeded()
-        }
+        }, completion: nil)
     }
     
     
@@ -177,6 +193,7 @@ class ViewController: UIViewController {
         view.addSubview(blueSquare)
         view.addSubview(distanceLabel)
         view.addSubview(distanceStepper)
+        view.addSubview(pickerView)
         addStackViewSubviews()
         addSideStackViewSubviews()
         view.addSubview(buttonStackView)
@@ -198,6 +215,7 @@ class ViewController: UIViewController {
         constrainSpeedStepper()
         constrainDistanceLabel()
         constrainDistanceStepper()
+        constrainPickerView()
         constrainLeftButton()
         constrainRightButton()
         constrainBlueSquare()
@@ -311,6 +329,46 @@ class ViewController: UIViewController {
         ])
     }
     
+    private func constrainPickerView() {
+        pickerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            pickerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            pickerView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
+            pickerView.heightAnchor.constraint(equalToConstant: 200),
+            pickerView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.3),
+        ])
+    }
+    
 }
 
-
+extension ViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerOptions.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        switch row {
+        case 0:
+            return "Auto-Reverse"
+        case 1:
+            return "Repeat"
+        case 2:
+            return "Ease-In Curve"
+        case 3:
+            return "Ease-Out Curve"
+        case 4:
+            return "Linear Curve"
+        default:
+            return ""
+        }
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        chosenAnimationStyle = pickerOptions[row]
+    }
+    
+}
